@@ -27,3 +27,4 @@ export const USERBOT_API_HASH = getEnvVar('USERBOT_API_HASH');
 export const USERBOT_PHONE_NUMBER = getEnvVar('USERBOT_PHONE_NUMBER');
 
 export const BOT_ADMIN_ID = Number(getEnvVar('BOT_ADMIN_ID'));
+export const BOT_ADMIN_USERNAME = getEnvVar('BOT_ADMIN_USERNAME');
