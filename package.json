@@ -1,0 +1,33 @@
+{
+	"name": "private-channel-scraper",
+	"version": "1.0.0",
+	"main": "./src/index.ts",
+	"scripts": {
+		"dev": "nodemon",
+		"build": "tsc && tsc-alias",
+		"lint": "eslint src",
+		"lint:fix": "eslint src --fix",
+    "process:stop": "npx pm2 stop ecosystem.config.js && npx pm2 delete ecosystem.config.js",
+		"process:start": "yarn build && npx pm2 start ecosystem.config.js",
+    "deploy": "yarn process:stop && yarn process:start"
+	},
+	"dependencies": {
+		"dotenv": "^16.0.3",
+		"effector": "^23.2.0",
+		"input": "^1.0.1",
+		"patronum": "^2.2.0",
+		"telegraf": "^4.12.2",
+		"telegram": "2.19.10"
+	},
+	"devDependencies": {
+		"@types/node": "^20.1.7",
+		"eslint": "^8.42.0",
+		"eslint-kit": "^9.1.0",
+		"nodemon": "^2.0.22",
+		"prettier": "^2.8.8",
+		"ts-node": "^10.9.1",
+		"tsc-alias": "^1.8.7",
+		"tsconfig-paths": "^4.2.0",
+		"typescript": "^5.0.4"
+	}
+}
