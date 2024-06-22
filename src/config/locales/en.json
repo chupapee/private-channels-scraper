@@ -1,0 +1,11 @@
+{
+  "personalAccess": "This bot developed only for personal use.\nIf you want to have your own bot for downloading media files from private channels, please contact @chupapee",
+  "linkExample": "🔗 Send a link to the post from private channel:\n\nexample:\nhttps://t.me/c/1234/5678",
+  "sendingLink": "⚠️ Downloading media files, please wait a moment",
+  "processingLink": "⏳ Processing link...",
+  "storedInSaved": "✅ Stored in [Saved Messages]",
+  "approveRestart": "Are you sure you want to restart the bot?",
+  "yes": "Yes",
+  "wrongLink": "🚫 Wrong link",
+  "restartingBot": "⏳ Restarting bot..."
+}

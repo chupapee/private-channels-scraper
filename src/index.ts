@@ -1,5 +1,6 @@
 import { IContextBot } from 'config/context-interface';
 import { BOT_ADMIN_ID, BOT_ADMIN_USERNAME, BOT_TOKEN } from 'config/env-config';
+import { i18n } from 'config/i18n';
 import { initUserbot } from 'config/userbot';
 import { downloadAndSavePost } from 'download-save-post';
 import { createEvent, createStore } from 'effector';
@@ -9,6 +10,7 @@ import { callbackQuery, message } from 'telegraf/filters';
 export const bot = new Telegraf<IContextBot>(BOT_TOKEN);
 
 bot.use(session());
+bot.use(i18n.middleware());
 
 bot.catch((error) => {
   console.error(error, 'INDEX.TS');
@@ -16,19 +18,14 @@ bot.catch((error) => {
 
 bot.use((ctx, next) => {
   if (ctx.from?.id !== BOT_ADMIN_ID) {
-    return ctx.reply(
-      'This bot developed only for personal use.\nIf you want to have your own bot for downloading media files from private channels, please contact @chupapee'
-    );
+    return ctx.reply(ctx.i18n.t('personalAccess'));
   }
 
   return next();
 });
 
 bot.start(async (ctx) => {
-  await ctx.reply(
-    '🔗 Отправь ссылку на пост из канала в котором состоишь:\n\n' +
-      'пример ссылки:\nhttps://t.me/c/1234/5678'
-  );
+  await ctx.reply(ctx.i18n.t('linkExample'));
 });
 
 const $isSending = createStore(false);
@@ -49,9 +46,7 @@ bot.on(message('text'), async (ctx) => {
     let text = ctx.message.text;
 
     if ($isSending.getState()) {
-      return ctx.reply(
-        '⚠️ Идёт загрузка медиафайлов, пожалуйста подождите немного'
-      );
+      return ctx.reply(ctx.i18n.t('sendingLink'));
     }
 
     if (text.startsWith('https://telesco.pe/')) {
@@ -59,7 +54,7 @@ bot.on(message('text'), async (ctx) => {
     }
 
     if (text.startsWith('https://t.me/')) {
-      await ctx.reply('⏳ Обработка ссылки...');
+      await ctx.reply(ctx.i18n.t('processingLink'));
       const splittedText = text.split('/');
       const postId = Number(splittedText.at(-1)?.replace('?single', ''));
       const channel = splittedText.at(-2);
@@ -70,7 +65,7 @@ bot.on(message('text'), async (ctx) => {
       await downloadAndSavePost({ channelId, postId });
 
       await ctx.reply(
-        `✅ Сохранено в [Избранных](https://t.me/${BOT_ADMIN_USERNAME})`,
+        ctx.i18n.t('storedInSaved') + `(https://t.me/${BOT_ADMIN_USERNAME})`,
         {
           ...extraOptions,
           parse_mode: 'MarkdownV2',
@@ -83,15 +78,17 @@ bot.on(message('text'), async (ctx) => {
 
     // restart action
     if (ctx.from.id === BOT_ADMIN_ID && ctx.message.text === RESTART_COMMAND) {
-      ctx.reply('Уверен что хочешь перезагрузить бота?', {
+      ctx.reply(ctx.i18n.t('approveRestart'), {
         reply_markup: {
-          inline_keyboard: [[{ text: 'Да', callback_data: RESTART_COMMAND }]],
+          inline_keyboard: [
+            [{ text: ctx.i18n.t('yes'), callback_data: RESTART_COMMAND }],
+          ],
         },
       });
       return;
     }
 
-    ctx.reply('🚫 Неверная ссылка');
+    ctx.reply(ctx.i18n.t('wrongLink'));
   };
 
   handleMessage();
@@ -99,7 +96,7 @@ bot.on(message('text'), async (ctx) => {
 
 bot.on(callbackQuery('data'), async (ctx) => {
   if (ctx.callbackQuery.data === RESTART_COMMAND) {
-    await ctx.answerCbQuery('⏳ Перезагрузка бота...');
+    await ctx.answerCbQuery(ctx.i18n.t('restartingBot'));
     process.exit();
   }
 });
